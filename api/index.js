@@ -102,28 +102,30 @@ async function handleSource(res, mediaId, type, origin, season, episode) {
     const data = JSON.parse(body);
     if (!data) return sendJson(res, { error: 'No source found' }, 404);
 
-    const rewritten = rewriteSourceUrls(data, origin);
+    const rewritten = rewriteSourceUrls(data, origin, 'https://cdn.cinesl.top');
     sendJson(res, rewritten);
   } catch (err) {
     sendJson(res, { error: err.message }, 500);
   }
 }
 
-function rewriteSourceUrls(obj, origin) {
+function rewriteSourceUrls(obj, origin, proxyOrigin = null) {
   if (typeof obj === 'string') {
     if (obj.includes('.m3u8') || obj.startsWith('http')) {
       try {
         new URL(obj); 
-        return `${origin}/watch?url=${encodeURIComponent(obj)}`;
+        // Use PHP proxy if provided, otherwise use local watch endpoint
+        const proxyUrl = proxyOrigin || origin;
+        return `${proxyOrigin}/proxy.php?url=${encodeURIComponent(obj)}`;
       } catch { }
     }
     return obj;
   }
-  if (Array.isArray(obj)) return obj.map(item => rewriteSourceUrls(item, origin));
+  if (Array.isArray(obj)) return obj.map(item => rewriteSourceUrls(item, origin, proxyOrigin));
   if (obj && typeof obj === 'object') {
     const out = {};
     for (const [k, v] of Object.entries(obj)) {
-      out[k] = rewriteSourceUrls(v, origin);
+      out[k] = rewriteSourceUrls(v, origin, proxyOrigin);
     }
     return out;
   }
