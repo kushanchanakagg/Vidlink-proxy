@@ -9,9 +9,9 @@ const NONCE = new Uint8Array(24);
 
 // 🔥 YOUR PHP PROXY SERVERS
 const EDGES = [
-  'https://cdn1.cinesl.top',
-  'https://cdn2.cinesl.top',
-  'https://cdn3.cinesl.top'
+  'https://cdn.cinesl.top',
+  'https://file.cinesl.top',
+  'https://cinesl.yzz.me'
 ];
 
 // ─── HEADERS ───────────────────────────────────────────────────────────────
